@@ -2,13 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 
 public class Login extends JFrame implements ActionListener {
 
     JTextField cardText;
     JTextField pinText;
 
-    JButton signIn, clear, login;
+    JButton signUp, clear, login;
 
     Login(){
         setTitle("Automated Teller machine");
@@ -46,12 +47,13 @@ public class Login extends JFrame implements ActionListener {
         pinText.setBounds(320,190,150,30);
         add(pinText);
 
-        signIn = new JButton("SIGN IN");
-        signIn.setBounds(170,260,120,50);
-        signIn.setFocusable(false);
-        signIn.setBackground(Color.BLACK);
-        signIn.setForeground(Color.white);
-        add(signIn);
+        signUp = new JButton("SIGN UP");
+        signUp.setBounds(170,260,120,50);
+        signUp.setFocusable(false);
+        signUp.setBackground(Color.BLACK);
+        signUp.setForeground(Color.white);
+        signUp.addActionListener(this);
+        add(signUp);
 
         clear = new JButton("CLEAR");
         clear.setBounds(330,260,120,50);
@@ -66,12 +68,14 @@ public class Login extends JFrame implements ActionListener {
         login.setFocusable(false);
         login.setBackground(Color.BLACK);
         login.setForeground(Color.white);
+        login.addActionListener(this);
         add(login);
 
         setSize(800,480);
         setLocation(300,10);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+
     }
 
     public static void main(String[] args) {
@@ -80,7 +84,28 @@ public class Login extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == clear){
+        if(e.getSource() == login){
+            Conn conn = new Conn();
+            String cardNumber = cardText.getText();
+            String pin = pinText.getText();
+            String query = "select * from login where card_number = '"+cardNumber+"' and pin_number = '"+pin+"' ";
+
+            try{
+                ResultSet rs = conn.s.executeQuery(query);
+                if(rs.next()){
+                    setVisible(false);
+                    new Transaction(pin).setVisible(true);
+                }else{
+                    JOptionPane.showMessageDialog(null,"Incorrect PIN or card number");
+                }
+            }catch (Exception ex){
+                System.out.println(ex);
+            }
+        } else if (e.getSource() == signUp) {
+            setVisible(false);
+            new PersonalDetails().setVisible(true);
+
+        } else if(e.getSource() == clear){
             cardText.setText(" ");
             pinText.setText(" ");
         }
