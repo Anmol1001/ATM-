@@ -108,6 +108,10 @@ public class Transaction extends JFrame implements ActionListener {
             new BalanceInquiry(pinCode);
         }
 
+        if(e.getSource() == miniStatement){
+            new MiniStatement(pinCode);
+        }
+
       if(e.getSource() == exit){
           System.exit(0);
       }
